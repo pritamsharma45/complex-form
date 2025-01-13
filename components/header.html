@@ -1,0 +1,37 @@
+<section class="hero has-background-light">
+  <div class="hero-body">
+    <div class="columns">
+      <div class="column is-half">
+        <div class="columns">
+          <div class="column is-one-fifth mt-3">
+            <b-icon style="
+                color: rgba(180, 136, 67);
+                font-size: 100px;
+                margin-left: 6rem;
+              " pack="fas" icon="circle">
+            </b-icon>
+          </div>
+          <div class="column">
+            <p class="is-size-3">
+              <strong>Acme</strong><span style="color: rgba(180, 136, 67); margin-left: 1rem">CONSULTANTS</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="column is-half">
+        <p class="has-text-right">
+          <strong style="color: rgba(180, 136, 67); margin-left: 1rem">Acme Consultants</strong>
+        </p>
+        <p class="has-text-right">
+          <a href="vincent@Acmeconsultants.co.nz">vincent@Acmeconsultants.co.nz</a>
+        </p>
+        <p v-if="!showLoginForm" class="has-text-right">
+          <b-button rounded type="is-danger" icon-left="logout" style="height: 20px" @click="logout" size="is-small">
+            Logout
+          </b-button>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</section>

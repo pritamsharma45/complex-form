@@ -1,0 +1,206 @@
+<div v-if="showingMainForm">
+  <div id="entryForm1" style="position: relative; width: 100%;">
+    <div class="container mx-6" v-for="(section,k) in formSchema">
+      <div class="box my-2" style="background-color: rgb(255, 251, 246)">
+        <div :class="section.titleCls + ' mb-2' +' has-text-weight-bold'">
+          {{section.title}}
+        </div>
+        <div class="mt-0 mb-2 is-size-7 has-text-weight-light is-family-sans-serif">
+          {{section.titleNotes}}
+        </div>
+        <div class="content" v-if="section.titleDescription">
+          <ul>
+            <li class="is-size-7 has-text-weight-semibold" v-for="item in section.titleDescription">
+              {{item}}
+            </li>
+          </ul>
+        </div>
+        <div v-if="section.flds">
+          <div class="columns is-gapless is-multiline">
+            <div :class="fld.fldCls" v-for="(fld,i) in section.flds" :key="i">
+              <div class="mx-2 my-1" v-if="fld.type ==='text'">
+                <b-field :label="fld.label" custom-class="is-small" :message="fld.message">
+                  <b-input v-model="model['s_'+ k + '_fld_'+ i]" size="is-small"></b-input>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='textarea'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <b-input v-model="model['s_'+ k + '_fld_'+ i]" size="is-small"></b-input>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='number'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <p v-if="fld.prefix" class="control">
+                    <span class="button is-static is-small">{{fld.prefix}}</span>
+                  </p>
+                  <b-numberinput :controls="false" v-model="model['s_'+ k + '_fld_'+ i]"
+                    size="is-small"></b-numberinput>
+                  <p v-if="fld.suffix" class="control">
+                    <span class="button is-static is-small">{{fld.suffix}}</span>
+                  </p>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='radio'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <b-radio v-model="model['s_'+ k + '_fld_'+ i]" size="is-small"
+                    :native-value="fld.options[0]['value']">
+                    {{fld.options[0]['display']}}</b-radio>
+                  <b-radio v-model="model['s_'+ k + '_fld_'+ i]" size="is-small"
+                    :native-value="fld.options[1]['value']">
+                    {{fld.options[1]['display']}}</b-radio>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='date'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <b-datepicker size="is-small" v-model="model['s_'+ k + '_fld_'+ i]" placeholder="Click to select..."
+                    icon="calendar-today" trap-focus>
+                  </b-datepicker>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='month'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <b-datepicker size="is-small" v-model="model['s_'+ k + '_fld_'+ i]" placeholder="Select month"
+                    type="month" icon="calendar-today" trap-focus>
+                  </b-datepicker>
+                </b-field>
+              </div>
+              <div class="mx-2 my-1" v-if="fld.type ==='select'">
+                <b-field :label="fld.label" custom-class="is-small">
+                  <b-select size="is-small" v-model="model['s_'+ k + '_fld_'+ i]">
+                    <option v-for="option in fld.options" :value="option" :key="option">
+                      {{option}}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+            </div>
+          </div>
+          <div v-if="section.groups">
+            <div v-for="(group,g) in section.groups">
+              <fieldset class="box mt-4 mb-4">
+                <legend class="label">{{group.title}}</legend>
+                <div class="columns container">
+                  <div v-for="(fld,i) in group.flds">
+                    <div class="mx-2 my-1" v-if="fld.type ==='text'">
+                      <b-field :label="fld.label" custom-class="is-small">
+                        <b-input v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"></b-input>
+                      </b-field>
+                    </div>
+                    <div class="mx-2 my-1" v-if="fld.type ==='number'">
+                      <b-field :label="fld.label" custom-class="is-small">
+                        <p v-if="fld.prefix" class="control">
+                          <span class="button is-static is-small">{{fld.prefix}}</span>
+                        </p>
+                        <b-input v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"></b-input>
+                        <p v-if="fld.suffix" class="control">
+                          <span class="button is-static is-small">{{fld.suffix}}</span>
+                        </p>
+                      </b-field>
+                    </div>
+                    <div class="mx-2 my-1" v-if="fld.type ==='radio'">
+                      <b-field :label="fld.label" custom-class="is-small mb-3">
+                        <b-radio v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                          :native-value="fld.options[0]['value']">{{fld.options[0]['display']}}</b-radio>
+                        <b-radio v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                          :native-value="fld.options[1]['value']">{{fld.options[1]['display']}}</b-radio>
+                      </b-field>
+                    </div>
+                    <div class="mx-2 my-1" v-if="fld.type ==='date'">
+                      <b-field :label="fld.label" custom-class="is-small">
+                        <b-datepicker v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                          placeholder="Click to select..." icon="calendar-today" trap-focus>
+                        </b-datepicker>
+                      </b-field>
+                    </div>
+                    <div v-if="fld.type ==='select'">
+                      <b-field :label="fld.label" custom-class="is-small">
+                        <b-select v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small">
+                          <option v-for="option in fld.options" :value="option" :key="option">
+                            {{option}}
+                          </option>
+                        </b-select>
+                      </b-field>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div v-if="section.groups">
+          <div v-for="(group,g) in section.groups">
+            <fieldset class="box mt-4 mb-4" style="background-color: rgba(252, 244, 236, 0.753)">
+              <legend class="label">{{group.title}}</legend>
+              <div class="columns container">
+                <div v-for="(fld,i) in group.flds">
+                  <div class="mx-2 my-1" v-if="fld.type ==='text'">
+                    <b-field :label="fld.label" custom-class="is-small">
+                      <b-input v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"></b-input>
+                    </b-field>
+                  </div>
+                  <div class="mx-2 my-1" v-if="fld.type ==='number'">
+                    <b-field :label="fld.label" custom-class="is-small">
+                      <p v-if="fld.prefix" class="control">
+                        <span class="button is-static is-small">{{fld.prefix}}</span>
+                      </p>
+                      <b-numberinput :controls="false" v-model="model['s_' + k + '_g_' + g + '_fld_' + i]"
+                        size="is-small"></b-numberinput>
+                      <p v-if="fld.suffix" class="control">
+                        <span class="button is-static is-small">{{fld.suffix}}</span>
+                      </p>
+                    </b-field>
+                  </div>
+                  <div class="mx-2 my-1" v-if="fld.type ==='radio'">
+                    <b-field :label="fld.label" custom-class="is-small mb-3">
+                      <b-radio v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                        :native-value="fld.options[0]['value']">{{fld.options[0]['display']}}</b-radio>
+                      <b-radio v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                        :native-value="fld.options[1]['value']">{{fld.options[1]['display']}}</b-radio>
+                    </b-field>
+                  </div>
+                  <div class="mx-2 my-1" v-if="fld.type ==='date'">
+                    <b-field :label="fld.label" custom-class="is-small">
+                      <b-datepicker v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small"
+                        placeholder="Click to select..." icon="calendar-today" trap-focus>
+                      </b-datepicker>
+                    </b-field>
+                  </div>
+                  <div class="mx-2 my-1" v-if="fld.type ==='select'">
+                    <b-field :label="fld.label" custom-class="is-small">
+                      <b-select v-model="model['s_' + k + '_g_' + g + '_fld_' + i]" size="is-small">
+                        <option v-for="option in fld.options" :value="option" :key="option">
+                          {{option}}
+                        </option>
+                      </b-select>
+                    </b-field>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <div class="is-size-5">{{section.footer}}</div>
+        <div class="is-size-7 has-text-weight-light is-family-sans-serif">
+          {{section.footerNotes}}
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- <pre>
+    {{model}}
+  </pre>
+  <pre>
+    {{formSchema}}
+  </pre> -->
+
+  <div class="container">
+    <button class="button is-info mt-2 mb-4" @click="submitAndEmail" :disabled="locked">
+      Submit Form
+    </button>
+  </div>
+
+  <button class="button is-warning float" @click="submit" :disabled="locked" style="height: 28px">
+    <span>{{isSaving?'...Saving':'Save'}}</span>
+  </button>
+</div>

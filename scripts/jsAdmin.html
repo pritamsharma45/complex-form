@@ -1,0 +1,226 @@
+<?!= include('mixins/formSchemaMixin'); ?>
+<script>
+  new Vue({
+    el: "#app",
+    mixins: [invitationMixin, formSchemaMixin],
+    data: () => {
+      return {
+        showDetailIcon: true,
+        selected: null,
+        columns: [
+          {
+            field: "s_0_fld_0",
+            label: "Client Name",
+            type: "text",
+          },
+          {
+            field: "locked",
+            label: "Locked",
+            type: "text",
+
+          },
+        ],
+        data: [],
+        model: {},
+        isCardModalActive: false,
+      };
+    },
+    computed: {},
+    mounted() {
+      this.getStringifiedTables();
+      this.getInvitations();
+    },
+    methods: {
+
+      parseModelForDate() {
+        this.formSchema.forEach((s, i) => {
+          if (s.flds) {
+            s.flds.forEach((fld, k) => {
+              if (fld.type === 'date' || fld.type === 'month') {
+                this.model['s_' + i + '_fld_' + k] = new Date(this.model['s_' + i + '_fld_' + k]);
+              }
+            })
+          }
+          if (s.groups) {
+            s.groups.forEach((g, k) => {
+              if (g.flds) {
+                g.flds.forEach((fld, l) => {
+                  if (fld.type === 'date' || fld.type === 'month') {
+                    this.model['s_' + i + '_g_' + k + '_fld_' + l] = new Date(this.model['s_' + i + '_g_' + k + '_fld_' + l]);
+                  }
+                })
+              }
+            })
+          }
+        })
+
+      },
+      deleteEntry(id) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+            this.$buefy.toast.open({
+              message: `Selected form has been deleted.`,
+              type: "is-danger",
+            });
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .deleteEntryByID(id, "ResponseSheet");
+      },
+      viewDetail(row) {
+        console.log(row);
+        this.model = row.model;
+        this.parseModelForDate();
+      },
+      edit(id) { },
+
+      toggleLock(row) {
+
+        const toastMsg = row.locked ? "unlocked" : "locked";
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+
+            this.$buefy.toast.open({
+              message: `Selected form has been ${toastMsg} for editing`,
+              type: "is-primary",
+            });
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .UpdateAttributes("ResponseSheet", row.id, { locked: row.locked });
+      },
+      getStringifiedTables() {
+        const tableNames = ["tbl_ResponseSheet"];
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+            tableNames.forEach((name) => {
+
+              this.data = this._ArrayToJSON(res[name]).map((row) => {
+                let files;
+                return {
+                  id: row.id,
+                  client_email: row.client_email,
+                  locked: row.locked,
+                  ...JSON.parse(row.model),
+                  files: row.files ? JSON.parse(row.files) : "",
+                  model: JSON.parse(row.model),
+                };
+              });
+            });
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .getStringifiedTables(tableNames);
+      },
+      _ArrayToJSON(array2D) {
+        const header = array2D[0];
+        const body = array2D.slice(1);
+        //  Filter out empty rows
+        const arr2 = body.filter((el) => el.some((cell) => cell !== "")).map((el) => {
+          let obj = {};
+          for (let i = 0; i < el.length; ++i) {
+            obj[header[i]] = el[i];
+          }
+          return obj;
+        });
+        return arr2.reverse();
+      },
+      generatePDF() {
+        const element = document.getElementById('entryForm');
+        const opt = {
+          margin: 0.0,
+          filename: 'client-form.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            onclone: function (clonedDoc) {
+              const content = clonedDoc.getElementById('entryForm');
+              content.style.transform = 'scale(0.6)';
+              content.style.transformOrigin = 'top left';
+            }
+          },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Generate PDF
+        html2pdf().set(opt).from(element).save();
+      },
+      generateAndEmailPDF() {
+        const element = document.getElementById('entryForm');
+        const opt = {
+          margin: 0.0,
+          filename: 'client-form.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            onclone: function (clonedDoc) {
+              const content = clonedDoc.getElementById('entryForm');
+              content.style.transform = 'scale(0.6)';
+              content.style.transformOrigin = 'top left';
+            }
+          },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Generate PDF and send email
+        return html2pdf().set(opt).from(element).outputPdf('datauristring');
+      },
+      submitAndEmail() {
+        this.isSaving = true;
+        // First save the form
+        const updateObject = {
+          model: JSON.stringify(this.model),
+          client_email: this.enteredId,
+          locked: this.locked
+        };
+        if (this.formId != null) {
+          updateObject.id = this.formId;
+        }
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            // After saving, generate and email PDF
+            this.generateAndEmailPDF().then((pdfBase64) => {
+              const clientName = this.model.s_0_fld_0 || 'Client';
+              const emailData = {
+                pdfData: pdfBase64,
+                filename: `${clientName}_form.pdf`,
+                subject: `Tax Return Form - ${clientName}`,
+                clientName: clientName
+              };
+
+              google.script.run
+                .withSuccessHandler(() => {
+                  this.isSaving = false;
+                  this.$buefy.toast.open({
+                    message: 'Form saved and PDF emailed successfully!',
+                    type: 'is-success'
+                  });
+                })
+                .withFailureHandler((error) => {
+                  console.error(error);
+                  this.isSaving = false;
+                  this.$buefy.toast.open({
+                    message: 'Failed to send email',
+                    type: 'is-danger'
+                  });
+                })
+                .emailPDF(emailData);
+            });
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+            this.isSaving = false;
+          })
+          .addEntry(updateObject, "ResponseSheet");
+      },
+    },
+  });
+</script>

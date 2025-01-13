@@ -1,0 +1,317 @@
+<?!= include('mixins/formSchemaMixin'); ?>
+<script>
+  new Vue({
+    el: "#app",
+    mixins: [formSchemaMixin],
+    data: () => {
+      return {
+        token: null,
+        formId: null,
+        enteredId: "",
+        invitationCode: "",
+        invitations: {},
+        isSaving: false,
+        showingMainForm: false,
+        showLoginForm: true,
+        model: {},
+        locked: false,
+      };
+    },
+    mounted() {
+      this.attemptAutoLogin();
+      this.generateModel();
+      this.getInvitations();
+    },
+    methods: {
+      generateModel() {
+        console.log("I am mounted");
+        const model = {};
+        this.formSchema.forEach((s, i) => {
+          if (s.flds) {
+            s.flds.forEach((fld, k) => {
+              model["s_" + i + "_fld_" + k] = "";
+              fld.key = "s_" + i + "_fld_" + k;
+            });
+          }
+          if (s.groups) {
+            s.groups.forEach((g, k) => {
+              if (g.flds) {
+                g.flds.forEach((fld, l) => {
+                  model["s_" + i + "_g_" + k + "_fld_" + l] = "";
+                  fld.key = "s_" + i + "_g_" + k + "_fld_" + l;
+                });
+              }
+            });
+          }
+        });
+        this.model = model;
+        console.log(model);
+      },
+      parseModelForDate() {
+        this.formSchema.forEach((s, i) => {
+          if (s.flds) {
+            s.flds.forEach((fld, k) => {
+              if (fld.type === 'date' || fld.type === 'month') {
+                this.model['s_' + i + '_fld_' + k] = new Date(this.model['s_' + i + '_fld_' + k]);
+              }
+            })
+          }
+          if (s.groups) {
+            s.groups.forEach((g, k) => {
+              if (g.flds) {
+                g.flds.forEach((fld, l) => {
+                  if (fld.type === 'date' || fld.type === 'month') {
+                    this.model['s_' + i + '_g_' + k + '_fld_' + l] = new Date(this.model['s_' + i + '_g_' + k + '_fld_' + l]);
+                  }
+                })
+              }
+            })
+          }
+        })
+
+      },
+      submitHandler() {
+        console.log("Populated Model", this.model);
+        this.isSubmitting = true;
+
+        const updateOrCreateObj = {
+          ...this.updateOrCreateObj,
+
+          model: JSON.stringify({ ...this.model, ...this.computedProps }),
+          files: JSON.stringify(this.files),
+        };
+        console.log("Form Object", updateOrCreateObj);
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(
+              "Record created successfully.Now will update stores and run getFiles()"
+            );
+            if (!this.row) {
+              this.modelId = res.id;
+            }
+            this.updateStore(res);
+            this.showSuccesToast();
+
+            this.clearForm();
+            this.getFiles();
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .addEntry(
+            { model: JSON.stringify(this.model), client_email: this.enteredId },
+            "ResponseSheet"
+          );
+      },
+      submit() {
+        this.isSaving = true;
+        const updateObject = {
+          model: JSON.stringify(this.model),
+          client_email: this.enteredId,
+          locked: this.locked
+        };
+        if (this.formId != null) {
+          updateObject.id = this.formId;
+        }
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+            this.isSaving = false;
+            this.$buefy.toast.open({
+              message: 'Form saved successfully!',
+              type: 'is-success',
+              duration: 5000
+            });
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+            this.isSaving = false;
+            this.$buefy.toast.open({
+              message: 'Failed to save form',
+              type: 'is-danger',
+              duration: 5000
+            });
+          })
+          .addEntry(updateObject, "ResponseSheet");
+      },
+      fetchFormData() {
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+            if (res != null) {
+              this.$buefy.toast.open({
+                message:
+                  "Record fetched successfully! Hit save button while you are progressing to save your all edits.",
+                type: "is-success",
+                duration: 5000,
+              });
+              this.formId = res.id;
+              this.locked = res.locked;
+              if (this.locked) {
+                this.$buefy.toast.open({
+                  message:
+                    `This form is locked for editing. <p>Edit will not be saved as Submit button is disabled.</p><p> Please contact owner of this form to unlock it.</p>`,
+                  type: "is-danger",
+                  duration: 5000,
+                });
+              }
+
+              this.model = JSON.parse(res.model);
+              this.parseModelForDate();
+            } else {
+
+              this.$buefy.toast.open({
+                message:
+                  `<p><b>Record Not Found.</b></p>Start with this blank form.`,
+                type: "is-primary",
+                duration: 5000,
+              });
+            }
+            this.showLoginForm = false;
+            this.showingMainForm = true;
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .getFormData(this.enteredId);
+      },
+      getInvitations() {
+        google.script.run
+          .withSuccessHandler((res) => {
+            this.invitations = res;
+            console.log(res);
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .getInvitations();
+      },
+      attemptAutoLogin() {
+        let userData = JSON.parse(localStorage.getItem("data"));
+        if (userData) {
+          let { email, token } = userData;
+          console.log('Local Storage token', token)
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Logging in..`,
+            type: 'is-info'
+          });
+          google.script.run
+            .withSuccessHandler((userToken) => {
+              console.log("Token fetched", userToken);
+              if (token === userToken) {
+                this.token = userToken;
+                this.enteredId = email;
+                this.fetchFormData();
+                this.$buefy.toast.open({
+                  duration: 5000,
+                  message: `Login successful. <p>Checking if record exist for your email ID.</p>`,
+                  type: 'is-success'
+                });
+              } else {
+                this.showLoginForm = true;
+                this.$buefy.toast.open({
+                  duration: 5000,
+                  message: `Token mismatch. <p>Login again</p>`,
+                  type: 'is-warning'
+                });
+              }
+            })
+            .withFailureHandler((error) => {
+              console.log(error);
+            })
+            .getToken(email);
+
+        } else {
+          this.showLoginForm = true;
+        }
+      },
+      login() {
+        this.$buefy.toast.open({
+          duration: 5000,
+          message: `Logging in..`,
+          type: 'is-info'
+        });
+        let email = this.enteredId;
+
+        google.script.run
+          .withSuccessHandler(({ token }) => {
+            console.log("Token:", token);
+            if (token === 'mismatch' || token === 'invalid') {
+              console.log("Login Failed");
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Login failed. Please input correct invitation code.`,
+                type: 'is-warning'
+              });
+            } else {
+
+              this.$buefy.toast.open({
+                duration: 5000,
+                message: `Login successful. <p>Checking if record exist for your email ID.</p>`,
+                type: 'is-success'
+              });
+              localStorage.setItem("data", JSON.stringify({ email, token }));
+              this.showLoginForm = false;
+              this.fetchFormData();
+            }
+
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+          })
+          .login(email, this.invitationCode);
+
+      },
+      logout() {
+        localStorage.removeItem('data');
+        this.showingMainForm = false;
+        this.enteredId = '';
+        this.showLoginForm = true;
+      },
+      renderFormWithFetchedData(formRecord) {
+        this.model = JSON.parse(formRecord.model);
+      },
+      submitAndEmail() {
+        this.isSaving = true;
+        const updateObject = {
+          model: JSON.stringify(this.model),
+          client_email: this.enteredId,
+          locked: this.locked
+        };
+        if (this.formId != null) {
+          updateObject.id = this.formId;
+        }
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            console.log(res);
+            this.isSaving = false;
+            this.$buefy.toast.open({
+              message: 'Form saved and emailed successfully!',
+              type: 'is-success',
+              duration: 5000
+            });
+            this.showLoginForm = true;
+            this.showingMainForm = false;
+          })
+          .withFailureHandler((error) => {
+            console.log(error);
+            this.isSaving = false;
+            this.$buefy.toast.open({
+              message: 'Failed to save form',
+              type: 'is-danger',
+              duration: 5000
+            });
+          })
+          .addEntry(updateObject, "ResponseSheet", this.formSchema);
+      },
+    },
+    computed: {
+      detailViewHtml() {
+        return this.generateDetailView();
+      }
+    }
+  });
+</script>

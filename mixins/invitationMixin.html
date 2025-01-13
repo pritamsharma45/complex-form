@@ -1,0 +1,144 @@
+<script>
+    var invitationMixin = {
+        data: function () {
+            return {
+                message: "",
+                indefinteToast: null,
+                submitting: false,
+                invitationForm: {
+
+                    emailtags: [
+
+                    ],
+                },
+                invitations: {},
+
+                isCardModalActive: false,
+            }
+        },
+        mounted() {
+            this.getStringifiedTables();
+            this.getInvitations();
+        },
+        methods: {
+
+            deleteEntry(id) {
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        console.log(res);
+                        this.$buefy.toast.open({
+                            message: `Selected form has been deleted.`,
+                            type: "is-danger",
+                        });
+                    })
+                    .withFailureHandler((error) => {
+                        console.log(error);
+                    })
+                    .deleteEntryByID(id, "ResponseSheet");
+            },
+            viewDetail(row) {
+                console.log(row);
+                this.model = row.model;
+            },
+            edit(id) { },
+            getInvitations() {
+                google.script.run
+                    .withSuccessHandler((res) => {
+
+                        console.log(res);
+                    })
+                    .withFailureHandler((error) => {
+                        console.log(error);
+                    })
+                    .getInvitations();
+            },
+            sendInvitations: function () {
+                let emailIds = this.invitationForm.emailtags;
+                this.raiseToast();
+                google.script.run
+                    .withSuccessHandler((invitation) => {
+                        this.closeToast();
+
+                        this.isCardModalActive = false;
+                        this.$buefy.toast.open({
+                            message: `<p class="teal-text">An invitation has been send to ${emailIds}.<\/p>`,
+                            type: 'is-success'
+                        })
+
+                        // this.resetInvitationForm();
+                    })
+                    .withFailureHandler(this.showError)
+                    .sendInvitations(emailIds);
+
+
+            },
+            raiseToast() {
+                this.indefinteToast = this.$buefy.toast.open({
+                    indefinite: true,
+                    message: `<p class="teal-text">Sending...<\/p>`,
+                    type: 'is-warning'
+                })
+            },
+            closeToast() {
+                if (this.indefinteToast) {
+                    this.indefinteToast.close();
+                    this.indefinteToast = null;
+                }
+            },
+            toggleLock(row) {
+
+                const toastMsg = row.locked ? "unlocked" : "locked";
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        console.log(res);
+
+                        this.$buefy.toast.open({
+                            message: `Selected form has been ${toastMsg} for editing`,
+                            type: "is-primary",
+                        });
+                    })
+                    .withFailureHandler((error) => {
+                        console.log(error);
+                    })
+                    .UpdateAttributes("ResponseSheet", row.id, { locked: row.locked });
+            },
+            getStringifiedTables() {
+                const tableNames = ["tbl_ResponseSheet"];
+
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        console.log(res);
+                        tableNames.forEach((name) => {
+                            this.data = this._ArrayToJSON(res[name]).map((row) => {
+                                let files;
+                                return {
+                                    id: row.id,
+                                    client_email: row.client_email,
+                                    locked: row.locked,
+                                    ...JSON.parse(row.model),
+                                    files: row.files ? JSON.parse(row.files) : "",
+                                    model: JSON.parse(row.model),
+                                };
+                            });
+                        });
+                    })
+                    .withFailureHandler((error) => {
+                        console.log(error);
+                    })
+                    .getStringifiedTables(tableNames);
+            },
+            _ArrayToJSON(array2D) {
+                const header = array2D[0];
+                const body = array2D.slice(1);
+                const arr2 = body.map((el) => {
+                    let obj = {};
+                    for (let i = 0; i < el.length; ++i) {
+                        obj[header[i]] = el[i];
+                    }
+                    return obj;
+                });
+                return arr2.reverse();
+            },
+        },
+    }
+</script>

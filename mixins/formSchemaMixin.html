@@ -1,0 +1,843 @@
+<script>
+    const formSchemaMixin = {
+        data: () => ({
+            formSchema: [
+                // profile
+                {
+                    title: "Tax Return Checklist ‐ 31 March 2022",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "text",
+                            label: "Name",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "text",
+                            label: "Email",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "text",
+                            label: "Phone Number",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "text",
+                            label: "Address",
+                            fldCls: "column is-two-thirds",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "text",
+                            label: "IRD Number",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label: "Are you GST registered?",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "radio",
+                            label: "Are you a?",
+                            options: [
+                                {
+                                    display: "Acme Driver",
+                                    value: "Acme Driver",
+                                },
+                                {
+                                    display: "Delivery Driver",
+                                    value: "Delivery Driver",
+                                },
+                            ],
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "title is-4 has-text-centered",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes:
+                        "Please answer all of the following questions (for the financial year 01 April 2021 to 31 March 2022). Complete a separate form for prior years if required.",
+                },
+                // 1.
+                {
+                    title:
+                        "1.Please provide details of your earnings for the 12 months from 01 April 2021 to 31 March 2022",
+                    flds: [
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "A)	Uber (you can also send tax summary)",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "B)	Ola",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "C)	Didi",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "D)	Zoomy",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "E)	Other driving income",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "F)	Any other non-taxed income",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "G)	Wage subsidy",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "H)	Resurgence Support payments (RSP)",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "I)	COVID Support payments (CSP)",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "number",
+                            prefix: "$",
+                            label: "Uber",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes:
+                        "Note: We can access your wage/salary details through IRD and will include in your tax return.",
+                },
+                // 2.
+                {
+                    title:
+                        "2. Out of above RSP & CSP you received, how much has been used on business expenses up until 31 March 2022?",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Expenses?",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 3.
+                {
+                    title:
+                        "3. If this was your first year driving please advise which month you started. ",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "month",
+                            label: "",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes:
+                        "(Note: Mileage and expense details apply from when you started driving if you didn’t drive for the whole tax year)",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 4.
+                {
+                    title: "4. Business Vehicle Details",
+                    groups: [
+                        {
+                            title: "Car 1",
+                            flds: [
+                                {
+                                    horizontal: false,
+                                    type: "text",
+                                    label: "Year, make and model",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "select",
+                                    label: "Fuel type",
+                                    options: ["Petrol", "Diesel", "Hybrid"],
+                                    fldCls: "column is-one-quarter",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "date",
+                                    label: "Purchase Date",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "number",
+                                    prefix: "$",
+                                    label: "Cost",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "radio",
+                                    options: [
+                                        {
+                                            display: "Yes",
+                                            value: "Yes",
+                                        },
+                                        {
+                                            display: "No",
+                                            value: "No",
+                                        },
+                                    ],
+                                    label: "Was it financed?",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                            ],
+                        },
+                        {
+                            title: "Car 2",
+                            flds: [
+                                {
+                                    horizontal: false,
+                                    type: "text",
+                                    label: "Year, make and model",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "select",
+                                    label: "Fuel type",
+                                    options: ["Petrol", "Diesel", "Hybrid"],
+                                    fldCls: "column is-one-quarter",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "date",
+                                    label: "Purchase Date",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "number",
+                                    prefix: "$",
+                                    label: "Cost",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "radio",
+                                    label: "Was it financed?",
+                                    options: [
+                                        {
+                                            display: "Yes",
+                                            value: "Yes",
+                                        },
+                                        {
+                                            display: "No",
+                                            value: "No",
+                                        },
+                                    ],
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                            ],
+                        },
+                        {
+                            title:
+                                "•	Did you sell or dispose any business vehicle or other asset between 01 April 2021 and 31 March 2022? If yes, provide date and funds received.",
+                            flds: [
+                                {
+                                    horizontal: false,
+                                    type: "date",
+                                    label: "Date",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "number",
+                                    prefix: "$",
+                                    label: "Funds Received",
+                                    fldCls: "column is-one-third",
+                                    lblCls: "",
+                                },
+                                {
+                                    horizontal: false,
+                                    type: "textarea",
+
+                                    label: "Details",
+                                    fldCls: "column is-full-width",
+                                    lblCls: "",
+                                },
+                            ],
+                        },
+                    ],
+
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 5.
+                {
+                    title:
+                        "5.	Mileage: How many km’s did your business vehicle/s travel between 01 April 2021 and 31 March 2022? ",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "km's",
+
+                            label: "Car 1",
+                            fldCls: "",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "km's",
+
+                            label: "Car 2",
+                            fldCls: "",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "(Total including business and personal use)",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 6.
+                {
+                    title:
+                        "6.	What was the Acme/business use percentage of your vehicle use?",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "%",
+
+                            label: "Car 1",
+                            fldCls: "",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "%",
+
+                            label: "Car 2",
+                            fldCls: "",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 7.
+                {
+                    title: "7.	Did any of the following apply to you?",
+                    flds: [
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+
+                            label: "Interest or dividends received",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label: "Did you purchase or sell investment property?",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label: "Income from rents?",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label: "Any income from ‘working for families’",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label:
+                                "Income or losses from a company/ partnership/ trust/estate",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: true,
+                            type: "radio",
+                            options: [
+                                {
+                                    display: "Yes",
+                                    value: "Yes",
+                                },
+                                {
+                                    display: "No",
+                                    value: "No",
+                                },
+                            ],
+                            label: "Any other benefits or superannuation",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                {
+                    title: "8.	Garage/Home office expenses",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "sqm",
+                            label: "Total area of house",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "sqm",
+                            label:
+                                "Area of internal garage where your Acme/delivery vehicle is kept (if applicable)",
+                            fldCls: "column is-three-quarters",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            suffix: "sqm",
+                            label: "Area of office/workspace",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Weekly rent",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Annual mortgage interest",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Power and gas",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Home and contents insurance",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Council rates/water bill total",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Landline rental and Internet ",
+                            fldCls: "column is-one-quarter",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // 9.
+                {
+                    title: "9.	Expense details",
+                    flds: [
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Vehicle registration/COF",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Vehicle insurance",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Vehicle finance costs ‐ just email loan contract",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Fuel ",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Repairs and maintenance/tyres",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Lease payments (if rented car)",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Mobile phone handset and data",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Cleaning costs",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label:
+                                "Licensing (P endorsement, medical certificate, SPSL, logbook, background check etc)",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "TAMS fees",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Income protection insurance",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "ACC premiums",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                        {
+                            horizontal: false,
+                            type: "number",
+                            prefix: "$",
+                            label: "Last year’s accounting fees",
+                            fldCls: "column is-half",
+                            lblCls: "",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titleDescription: [
+                        "Providing full expense details will result in a lower tax bill! Applies to 1 April 2021 ‐ 31 March 2022.",
+                        "We do not need to see actual receipts (expenses must be legitimate business expenses in case of IRD checks).",
+                        "If you have an accounting system such as TaxSnaps or Xero please share with us, otherwise provide totals from your records.",
+                        "We can’t go through personal bank statements sorry as it is sometimes impossible to work out what is Acme expenditure and what is personal.",
+                    ],
+                    footer: "",
+                    footerNotes: "",
+                },
+                {
+                    title:
+                        "10. Miscellaneous costs (cables, water, mints, parking, stationary, aux cord, dash cam, NZTA camera, taxi meter, taxi toplight, tints, police radar, vacuum, stereo upgrade, phone mount, reverse camera, ITequipment, subscriptions (Spotify etc), car perfume, masks, hand sanitiser)",
+                    flds: [{ type: "textarea", label: "Cost?", fldCls: "", lblCls: "" }],
+                    titleCls: "",
+                    titleNotes: "(Speeding/bus lane fines etc are not tax deductible).",
+                    titledescription: "",
+                    footer: "",
+                    footerNotes: "",
+                },
+                // Tax tips
+                {
+                    title: "Tax Tips",
+                    flds: [],
+                    titleCls: "",
+                    titleNotes: "",
+                    titleDescription: [
+                        "Drivers should have a system to file expense records (physically or online). I use www.taxsnaps.co.nz which records photos & details of each receipt.",
+                        "It is also advisable to have a separate business bank account.",
+                        "You may find it useful to put aside money for tax throughout the year (20% of what you receive before expenses will normally cover it)",
+                        "GST: You must register for GST if your turnover is over $60,000 in a 12 month period (not including salary & wages).",
+                        "If you made charitable donations, don’t forget to claim your rebate.",
+                    ],
+                    footer: "",
+                    footerNotes: "",
+                },
+                // Tax return fee
+                {
+                    title: "Tax Return Fees",
+                    flds: [
+                        {
+                            type: "text",
+                            label: "Bank account details Acme Consultants Ltd",
+                            default: "03‐1506‐0142385‐00",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                            disabled: true,
+                        },
+                        {
+                            type: "text",
+                            label: "Part Time Drivers",
+                            default: "$199 inc GST",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                            disabled: true,
+                        },
+                        {
+                            type: "text",
+                            label: "Full Time Drivers",
+                            default: "$259 inc GST",
+                            fldCls: "column is-one-third",
+                            lblCls: "",
+                            disabled: true,
+                            message:
+                                "Extra charges apply for GST returns & company accounts etc.",
+                        },
+                    ],
+                    titleCls: "",
+                    titleNotes: "",
+                    titleDescription: [
+                        "Please pay tax return fee to the bank account below.",
+                        "We require $100 in advance with the balance invoiced when ready for IRD submission.",
+                        "Cancellations after receipt of checklist will incur a $100 inc GST admin fee",
+                        "Any withdrawal of applications after profit calculation will incur a $150 inc GST fee",
+                    ],
+                    footer: "",
+                    footerNotes: "",
+                },
+
+                // Signature
+                // {
+                //     title: "",
+                //     flds: [
+                //         {
+                //             horizontal: false,
+                //             type: "text",
+                //             label: "Signature",
+                //             fldCls: "column is-one-half",
+                //             lblCls: "",
+                //         },
+
+                //         {
+                //             horizontal: false,
+                //             type: "date",
+                //             label: "Date",
+                //             fldCls: "column is-one-half",
+                //             lblCls: "",
+                //         },
+                //     ],
+                //     titleCls: "",
+                //     titleNotes: "",
+
+                //     footer: "",
+                //     footerNotes: "",
+                // },
+            ],
+        })
+    };
+</script>

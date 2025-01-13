@@ -1,0 +1,16 @@
+<div v-if="showLoginForm" class="container mb-6">
+  <div class="box mt-6 mb-6">
+    <label class="label">Email ID</label>
+    <div class="control">
+      <input v-model="enteredId" class="input" type="email" placeholder="e.g. alex@example.com" />
+    </div>
+
+    <label class="label">Invitation Code</label>
+    <div class="control">
+      <input v-model="invitationCode" class="input" type="client_name" />
+    </div>
+    <div class="control mt-2">
+      <button class="button is-primary" @click="login" style="height: 28px">Login</button>
+    </div>
+  </div>
+</div>
